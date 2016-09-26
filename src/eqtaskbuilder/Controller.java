@@ -7,7 +7,6 @@ package eqtaskbuilder;
 
 import static eqtaskbuilder.MainWindow.con;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;

@@ -6,8 +6,12 @@
 package eqtaskbuilder;
 
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.util.HashMap;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultTreeModel;
@@ -26,16 +30,57 @@ public class MainWindow extends javax.swing.JFrame {
      */
     public MainWindow() {
 
-        Controller.connect();
+        //Controller.connect();
 
         initComponents();
+        
+        /* misc other swing initializations here */
         EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
+                
                 jTreeTasks.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
                 MainWindow.this.setSize(800,600);
+                
+                
+                
+                jPopupMenu = new JPopupMenu();
+                
+                JMenuItem menuItemNewTask = new JMenuItem("New Task");
+                menuItemNewTask.addActionListener( new ActionListener(){
+                    @Override
+                    public void actionPerformed(ActionEvent evt){
+                        System.out.println("Event Source: "+evt.getSource().getClass().toString());
+                        if(evt.getSource() instanceof JMenuItem){
+                            System.out.println(((JMenuItem)evt.getSource()).getText());
+                        }
+                    }
+                });
+                jPopupMenu.add(menuItemNewTask);
+                
+                /*
+                jTreeTasks.addMouseListener(new MouseAdapter(){
+                    @Override
+                    public void mousePressed(MouseEvent e){
+                        System.out.println("Mouse Pressed");
+                        jPopupMenu.show(e.getComponent(), e.getX(), e.getY());
+                    }
+                    
+                    @Override
+                    public void mouseReleased(MouseEvent e){
+                        System.out.println("Mouse Released");
+                        jPopupMenu.show(e.getComponent(), e.getX(), e.getY());
+                    }
+                });*/
             }
-        });
+            
+            
+        }); //end invoke later
 
+    }
+    
+    public static void initTreeModel(){
+        jTreeTasks.setModel(new DefaultTreeModel(Controller.getZoneTaskNodes()));
     }
 
     /**
@@ -191,8 +236,8 @@ public class MainWindow extends javax.swing.JFrame {
                 }
             }
             else if(SwingUtilities.isRightMouseButton(evt)){
-                
-                
+                System.out.println("Event Source: "+evt.getSource().getClass().toString());
+                jPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
             }
 
             
@@ -223,7 +268,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTree jTreeTasks;
+    private static javax.swing.JTree jTreeTasks;
     // End of variables declaration//GEN-END:variables
-
+    private javax.swing.JPopupMenu jPopupMenu;
 }

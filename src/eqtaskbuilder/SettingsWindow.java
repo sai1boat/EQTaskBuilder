@@ -18,8 +18,6 @@ public class SettingsWindow extends javax.swing.JFrame {
      */
     public SettingsWindow() {
         initComponents();
-        
-
         jTextFieldIPAddress.setText(Preferences.userRoot().get("com.sai1boat.eq.eqtaskbuilder.ip", ""));
         jTextFieldUsername.setText(Preferences.userRoot().get("com.sai1boat.eq.eqtaskbuilder.un", ""));
         jTextFieldPassword.setText(Preferences.userRoot().get("com.sai1boat.eq.eqtaskbuilder.pw", ""));
@@ -158,6 +156,7 @@ public class SettingsWindow extends javax.swing.JFrame {
         userPrefs.put("com.sai1boat.eq.eqtaskbuilder.schema", jTextFieldSchema.getText());
         this.dispose();
         Controller.connect();
+        MainWindow.initTreeModel();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /**

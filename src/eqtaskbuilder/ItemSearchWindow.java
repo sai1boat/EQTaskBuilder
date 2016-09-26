@@ -121,7 +121,8 @@ public class ItemSearchWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonCancelActionPerformed
 
     private void jButtonOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOkActionPerformed
-        
+        TaskPanel.jTextFieldRewardId.setText(jList1.getSelectedValue());
+        TaskPanel.jTextFieldReward.setText(jList1.getSelectedValue());
         this.dispose();
     }//GEN-LAST:event_jButtonOkActionPerformed
 
