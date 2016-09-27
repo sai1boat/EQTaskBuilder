@@ -74,11 +74,19 @@ public class Controller {
                             root.add(curZoneNode);
                         
                         curZone = rs_zoneTask.getString("long_name");
-                        curZoneNode = new EQTreeNode(curZone);
+                        curZoneNode = new EQTreeNode(curZone, true); //node is zone node. 
+                                                                     // this is so the right click menu
+                                                                     // knows the difference.
                         
                     }
                     
-                    //the task
+                    /*If theres no id on the task, assume we have a zone with no tasks
+                     *in it. But we will still leave the zone folder so that
+                     *tasks can be created in those zones.
+                     */
+                    if(rs_zoneTask.getString("t.id") == null)
+                        continue;
+                    
                     EQTreeNode node = new EQTreeNode(rs_zoneTask.getString("t.title"));
                     HashMap hm = new HashMap();
                     for(int i=1; i<meta.getColumnCount()+1;i++){
@@ -147,7 +155,7 @@ public class Controller {
             rs_zoneTask = con.prepareStatement("select z.id, z.long_name, z.short_name, t.id, t.duration, "
                     + "t.title, t.description, t.reward, t.rewardid, t.cashreward, t.xpreward, t.rewardmethod, "
                     + "t.startzone, t.minlevel, t.maxlevel, t.repeatable from zone z "
-                    + "INNER JOIN tasks t ON t.startzone = z.id ORDER BY z.long_name").executeQuery();
+                    + "LEFT OUTER JOIN tasks t ON t.startzone = z.id ORDER BY z.long_name").executeQuery();
             
             
         }
@@ -168,7 +176,8 @@ public class Controller {
         
         try{
 
-            rs = con.prepareStatement("SELECT i.id as id, i.name as name FROM items " +
+            rs = con.prepareStatement("SELECT i.id as id, i.name as name, " +
+                    " i.reclevel, i.reqlevel FROM items " +
                     " i WHERE LOWER(i.name) LIKE LOWER('%"+pattern+"%')").executeQuery();
             
         }
@@ -178,5 +187,71 @@ public class Controller {
         return rs;
     }
     
+    /*
+     *@insertOrUpdate: use INSERT OR UPDATE (defined in this file)
+     *
+     */
     
+    public static void save(String table, int insertOrUpdate, HashMap<String, String> values){
+        
+        StringBuilder sb = new StringBuilder();
+        
+        
+        //try{
+
+            switch(insertOrUpdate){
+                case INSERT:
+                    sb.append("INSERT INTO ");
+                    sb.append(table);
+                    sb.append(" (");
+                    for(String key :values.keySet()){
+                        if(key.equals("id"))
+                            continue;
+                        sb.append(key);
+                        sb.append(",");
+                    }
+                    sb.replace(sb.length()-1, sb.length()-1, ") ");
+                    sb.append("VALUES (");
+                    for(String key :values.keySet()){
+                        if(key.equals("id"))
+                            continue;
+                        sb.append("'");
+                        sb.append(values.get(key));
+                        sb.append("'");
+                        sb.append(",");
+                    }
+                    sb.replace(sb.length()-1, sb.length()-1, ") ");
+                    
+                    break;
+                case UPDATE:
+                    sb.append("UPDATE ");
+                    sb.append(table);
+                    sb.append(" SET ");
+                    for(String key :values.keySet()){
+                        if(key.equals("id"))
+                            continue;
+                        sb.append(key);
+                        sb.append("='");
+                        sb.append(values.get(key));
+                        sb.append("',");
+                    }
+                    sb.replace(sb.length()-1, sb.length(), " ");
+                    sb.append("WHERE id = ");
+                    sb.append(values.get("id"));
+                    
+                    
+                    break;
+            }
+            
+            System.out.println(sb.toString());
+            
+        //}
+        //catch(SQLException e){
+            //JOptionPane.showMessageDialog(null, e.getMessage());
+        //}
+        
+    }
+    
+    public static final int INSERT = 0;
+    public static final int UPDATE = 1;
 }

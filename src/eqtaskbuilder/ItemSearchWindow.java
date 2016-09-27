@@ -8,8 +8,8 @@ package eqtaskbuilder;
 import java.awt.EventQueue;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -35,23 +35,15 @@ public class ItemSearchWindow extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         jTextFieldName = new javax.swing.JTextField();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList<>();
         jButtonSearch = new javax.swing.JButton();
         jButtonCancel = new javax.swing.JButton();
         jButtonOk = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTableItems = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setText("Name");
-
-        jList1.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { " " };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
-        jList1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane1.setViewportView(jList1);
 
         jButtonSearch.setText("Search");
         jButtonSearch.addActionListener(new java.awt.event.ActionListener() {
@@ -74,27 +66,58 @@ public class ItemSearchWindow extends javax.swing.JFrame {
             }
         });
 
+        jTableItems.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Name", "Recommended Lvl", "Required Lvl", "Item ID"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTableItems.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jTableItems.setShowGrid(true);
+        jScrollPane2.setViewportView(jTableItems);
+        if (jTableItems.getColumnModel().getColumnCount() > 0) {
+            jTableItems.getColumnModel().getColumn(0).setPreferredWidth(200);
+        }
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextFieldName, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButtonSearch)
-                        .addGap(0, 100, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jTextFieldName, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButtonSearch))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(109, 109, 109)
                         .addComponent(jButtonCancel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButtonOk)))
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -105,12 +128,12 @@ public class ItemSearchWindow extends javax.swing.JFrame {
                     .addComponent(jTextFieldName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButtonSearch))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonCancel)
                     .addComponent(jButtonOk))
-                .addContainerGap(8, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -121,8 +144,12 @@ public class ItemSearchWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonCancelActionPerformed
 
     private void jButtonOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOkActionPerformed
-        TaskPanel.jTextFieldRewardId.setText(jList1.getSelectedValue());
-        TaskPanel.jTextFieldReward.setText(jList1.getSelectedValue());
+        int row = jTableItems.getSelectedRow();
+        String itemId = (String)jTableItems.getValueAt(row, COLUMN_ITEM_ID);
+        String itemName = (String)jTableItems.getValueAt(row, COLUMN_ITEM_NAME);
+        
+        TaskPanel.jTextFieldRewardId.setText(itemId);
+        TaskPanel.jTextFieldReward.setText(itemName);
         this.dispose();
     }//GEN-LAST:event_jButtonOkActionPerformed
 
@@ -137,21 +164,30 @@ public class ItemSearchWindow extends javax.swing.JFrame {
         final ResultSet rs = Controller.getItemsByNameResultSet(jTextFieldName.getText());
         if (rs != null) {
 
-            final DefaultListModel model = new DefaultListModel();
+            final DefaultTableModel model = (DefaultTableModel)jTableItems.getModel();
+            
+            for(int i=0; i<model.getRowCount(); i++){
+                model.removeRow(i);
+            }
+
 
             EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         while (rs.next()) {
-                            String name = rs.getString("name");
-
-                            model.addElement(name);
+                            
+                            model.addRow(new String[]{
+                                rs.getString("name"),
+                                rs.getString("reclevel"),
+                                rs.getString("reqlevel"),
+                                rs.getString("id")
+                            });
                             
                         }
 
-                        jList1.setModel(model);
-                        jList1.repaint();
+                        jTableItems.setModel(model);
+                        jTableItems.repaint();
 
                         rs.close();
                     } catch (SQLException e) {
@@ -193,6 +229,9 @@ public class ItemSearchWindow extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(ItemSearchWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -202,13 +241,15 @@ public class ItemSearchWindow extends javax.swing.JFrame {
         });
     }
 
+    int COLUMN_ITEM_NAME = 0;
+    int COLUMN_ITEM_ID = 3;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonCancel;
     private javax.swing.JButton jButtonOk;
     private javax.swing.JButton jButtonSearch;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JList<String> jList1;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable jTableItems;
     private javax.swing.JTextField jTextFieldName;
     // End of variables declaration//GEN-END:variables
 }

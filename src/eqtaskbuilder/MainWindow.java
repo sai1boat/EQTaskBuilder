@@ -58,20 +58,6 @@ public class MainWindow extends javax.swing.JFrame {
                 });
                 jPopupMenu.add(menuItemNewTask);
                 
-                /*
-                jTreeTasks.addMouseListener(new MouseAdapter(){
-                    @Override
-                    public void mousePressed(MouseEvent e){
-                        System.out.println("Mouse Pressed");
-                        jPopupMenu.show(e.getComponent(), e.getX(), e.getY());
-                    }
-                    
-                    @Override
-                    public void mouseReleased(MouseEvent e){
-                        System.out.println("Mouse Released");
-                        jPopupMenu.show(e.getComponent(), e.getX(), e.getY());
-                    }
-                });*/
             }
             
             
@@ -113,8 +99,18 @@ public class MainWindow extends javax.swing.JFrame {
 
         jSplitPane1.setDividerLocation(200);
 
+        jPanel1.setAutoscrolls(true);
+
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(23, 8));
+
         jTreeTasks.setModel(new DefaultTreeModel(Controller.getZoneTaskNodes()));
+        jTreeTasks.setAutoscrolls(true);
+        jTreeTasks.setMaximumSize(new java.awt.Dimension(99, 99));
         jTreeTasks.setPreferredSize(new java.awt.Dimension(200, 200));
+        jTreeTasks.setScrollsOnExpand(true);
+        jTreeTasks.setShowsRootHandles(true);
         jTreeTasks.setToggleClickCount(1);
         jTreeTasks.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -131,7 +127,7 @@ public class MainWindow extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 750, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
         );
 
         jSplitPane1.setLeftComponent(jPanel1);
@@ -154,14 +150,14 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(24, 24, 24)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(348, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(53, 53, 53)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(541, Short.MAX_VALUE))
+                .addContainerGap(591, Short.MAX_VALUE))
         );
 
         jSplitPane1.setRightComponent(jPanel2);
@@ -196,7 +192,7 @@ public class MainWindow extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 579, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 579, Short.MAX_VALUE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -215,7 +211,7 @@ public class MainWindow extends javax.swing.JFrame {
             final EQTreeNode node = (EQTreeNode) t.getLastSelectedPathComponent();
             
             if(SwingUtilities.isLeftMouseButton(evt)){
-                if (node != null && node.isLeaf()) {
+                if (node != null && node.isZone==false) {
 
                     EventQueue.invokeLater(new Runnable() {
 

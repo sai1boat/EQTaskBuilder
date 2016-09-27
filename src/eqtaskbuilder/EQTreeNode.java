@@ -15,9 +15,17 @@ import javax.swing.tree.DefaultMutableTreeNode;
 public class EQTreeNode extends DefaultMutableTreeNode {
     
     HashMap userHashMap;
+    boolean isZone;
     
     public EQTreeNode(String text){
         super(text);
         userHashMap = new HashMap();
+        isZone = false;
+    }
+    
+    public EQTreeNode(String text, boolean isZone){
+        super(text);
+        userHashMap = new HashMap();
+        this.isZone = isZone;
     }
 }
