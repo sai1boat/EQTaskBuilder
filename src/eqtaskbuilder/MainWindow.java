@@ -8,10 +8,12 @@ package eqtaskbuilder;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.sql.Connection;
 import java.util.HashMap;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultTreeModel;
@@ -39,9 +41,6 @@ public class MainWindow extends javax.swing.JFrame {
             @Override
             public void run() {
                 
-                jTreeTasks.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-                MainWindow.this.setSize(800,600);
-                
                 
                 
                 jPopupMenu = new JPopupMenu();
@@ -66,7 +65,48 @@ public class MainWindow extends javax.swing.JFrame {
     }
     
     public static void initTreeModel(){
+        
+
         jTreeTasks.setModel(new DefaultTreeModel(Controller.getZoneTaskNodes()));
+    }
+    
+    public void jTreeMouseClicked(MouseEvent evt){
+        if (evt.getSource() instanceof JTree) {
+            final JTree t = (JTree) evt.getSource();
+
+            final EQTreeNode node = (EQTreeNode) t.getLastSelectedPathComponent();
+            
+            if(SwingUtilities.isLeftMouseButton(evt)){
+                if (node != null && node.isZone==false) {
+
+                    EventQueue.invokeLater(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            HashMap hm = node.userHashMap;
+                            jPanel2.removeAll();
+                            jPanel2.add(new TaskPanel(hm));
+                            jPanel2.repaint();
+                        }
+                    });
+
+                } else if (node != null) {
+                    EventQueue.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            jPanel2.removeAll();
+                            jPanel2.repaint();
+                        }
+                    });
+                }
+            }
+            else if(SwingUtilities.isRightMouseButton(evt)){
+                System.out.println("Event Source: "+evt.getSource().getClass().toString());
+                jPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+            }
+
+            
+        }
     }
 
     /**
@@ -79,12 +119,11 @@ public class MainWindow extends javax.swing.JFrame {
     private void initComponents() {
 
         jSplitPane1 = new javax.swing.JSplitPane();
-        jPanel1 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTreeTasks = new javax.swing.JTree();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        jTreeTasks = new javax.swing.JTree();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -97,45 +136,9 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
-        jSplitPane1.setDividerLocation(200);
-
-        jPanel1.setAutoscrolls(true);
-
-        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        jScrollPane1.setMinimumSize(new java.awt.Dimension(23, 8));
-
-        jTreeTasks.setModel(new DefaultTreeModel(Controller.getZoneTaskNodes()));
-        jTreeTasks.setAutoscrolls(true);
-        jTreeTasks.setMaximumSize(new java.awt.Dimension(99, 99));
-        jTreeTasks.setPreferredSize(new java.awt.Dimension(200, 200));
-        jTreeTasks.setScrollsOnExpand(true);
-        jTreeTasks.setShowsRootHandles(true);
-        jTreeTasks.setToggleClickCount(1);
-        jTreeTasks.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTreeTasksMouseClicked(evt);
-            }
-        });
-        jScrollPane1.setViewportView(jTreeTasks);
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
-        );
-
-        jSplitPane1.setLeftComponent(jPanel1);
-
         jPanel2.setMinimumSize(new java.awt.Dimension(200, 200));
         jPanel2.setPreferredSize(new java.awt.Dimension(200, 200));
         jPanel2.setRequestFocusEnabled(false);
-        jPanel2.setSize(new java.awt.Dimension(200, 200));
 
         jTextArea1.setEditable(false);
         jTextArea1.setColumns(20);
@@ -150,17 +153,21 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(24, 24, 24)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(315, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(53, 53, 53)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(591, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jSplitPane1.setRightComponent(jPanel2);
+
+        jScrollPane4.setViewportView(jTreeTasks);
+
+        jSplitPane1.setLeftComponent(jScrollPane4);
 
         jMenu1.setText("File");
 
@@ -185,15 +192,15 @@ public class MainWindow extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 596, Short.MAX_VALUE)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 713, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 579, Short.MAX_VALUE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 468, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
@@ -202,45 +209,6 @@ public class MainWindow extends javax.swing.JFrame {
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         new SettingsWindow().setVisible(true);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
-
-    private void jTreeTasksMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTreeTasksMouseClicked
-
-        if (evt.getSource() instanceof JTree) {
-            final JTree t = (JTree) evt.getSource();
-
-            final EQTreeNode node = (EQTreeNode) t.getLastSelectedPathComponent();
-            
-            if(SwingUtilities.isLeftMouseButton(evt)){
-                if (node != null && node.isZone==false) {
-
-                    EventQueue.invokeLater(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            HashMap hm = node.userHashMap;
-                            jSplitPane1.setRightComponent(new TaskPanel(hm));
-                        }
-                    });
-
-                } else if (node != null) {
-                    EventQueue.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            jSplitPane1.setRightComponent(jPanel2);
-                        }
-                    });
-                }
-            }
-            else if(SwingUtilities.isRightMouseButton(evt)){
-                System.out.println("Event Source: "+evt.getSource().getClass().toString());
-                jPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
-            }
-
-            
-        }
-
-
-    }//GEN-LAST:event_jTreeTasksMouseClicked
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         if (con != null) {
@@ -258,13 +226,14 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTextArea jTextArea1;
     private static javax.swing.JTree jTreeTasks;
     // End of variables declaration//GEN-END:variables
     private javax.swing.JPopupMenu jPopupMenu;
+
 }
