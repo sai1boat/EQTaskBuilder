@@ -13,11 +13,9 @@ import java.sql.Connection;
 import java.util.HashMap;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeSelectionModel;
 
 /**
  *
@@ -51,7 +49,24 @@ public class MainWindow extends javax.swing.JFrame {
                     public void actionPerformed(ActionEvent evt){
                         System.out.println("Event Source: "+evt.getSource().getClass().toString());
                         if(evt.getSource() instanceof JMenuItem){
-                            System.out.println(((JMenuItem)evt.getSource()).getText());
+                            
+                            
+                            final EQTreeNode selectedNode = (EQTreeNode)jTreeTasks
+                                    .getSelectionPath().getLastPathComponent();
+                            
+                            
+                            System.out.println(selectedNode.toString()+" isZone:" +selectedNode.isZone);
+                            
+                            if(selectedNode.isZone==true){
+
+                                Controller.createNewTask(selectedNode);
+                            }
+                            else {
+                                
+                                Controller.createNewTaskFromPrototype(selectedNode);
+                                
+                            }
+                            initTreeModel();
                         }
                     }
                 });
@@ -76,26 +91,28 @@ public class MainWindow extends javax.swing.JFrame {
 
             final EQTreeNode node = (EQTreeNode) t.getLastSelectedPathComponent();
             
+            System.out.println(node.toString()+" isZone:" +node.isZone);
+            
             if(SwingUtilities.isLeftMouseButton(evt)){
-                if (node != null && node.isZone==false) {
+                if (node.isZone==false) {
 
                     EventQueue.invokeLater(new Runnable() {
 
                         @Override
                         public void run() {
                             HashMap hm = node.userHashMap;
-                            jPanel2.removeAll();
-                            jPanel2.add(new TaskPanel(hm));
-                            jPanel2.repaint();
+                            jSplitPane1.remove(jPanel2);
+                            jSplitPane1.setRightComponent(new TaskPanel(hm));
+                            jSplitPane1.repaint();
                         }
                     });
 
-                } else if (node != null) {
+                } else {
                     EventQueue.invokeLater(new Runnable() {
                         @Override
                         public void run() {
-                            jPanel2.removeAll();
-                            jPanel2.repaint();
+                            jSplitPane1.setRightComponent(jPanel2);
+                            jSplitPane1.repaint();
                         }
                     });
                 }
@@ -150,21 +167,20 @@ public class MainWindow extends javax.swing.JFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(315, Short.MAX_VALUE))
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 617, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(53, 53, 53)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 464, Short.MAX_VALUE)
         );
 
         jSplitPane1.setRightComponent(jPanel2);
 
+        jTreeTasks.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jTreeTasksMousePressed(evt);
+            }
+        });
         jScrollPane4.setViewportView(jTreeTasks);
 
         jSplitPane1.setLeftComponent(jScrollPane4);
@@ -219,6 +235,10 @@ public class MainWindow extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_formWindowClosing
+
+    private void jTreeTasksMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTreeTasksMousePressed
+        jTreeMouseClicked(evt);
+    }//GEN-LAST:event_jTreeTasksMousePressed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

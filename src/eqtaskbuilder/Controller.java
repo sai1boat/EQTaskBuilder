@@ -77,6 +77,11 @@ public class Controller {
                         curZoneNode = new EQTreeNode(curZone, true); //node is zone node. 
                                                                      // this is so the right click menu
                                                                      // knows the difference.
+                        HashMap hm = new HashMap();
+                        hm.put("id", rs_zoneTask.getString("z.id"));
+                        hm.put("long_name", rs_zoneTask.getString("z.long_name"));
+                        hm.put("short_name", rs_zoneTask.getString("z.short_name"));
+                        curZoneNode.userHashMap = hm;
                         
                     }
                     
@@ -250,6 +255,52 @@ public class Controller {
             //JOptionPane.showMessageDialog(null, e.getMessage());
         //}
         
+    }
+    
+    
+    public static void createNewTask(EQTreeNode selectedNode){
+        /*
+         * Populate hash map with the essentials. Selected node
+         * is a zone. Because this function is only called that way.
+         */
+        
+        if(selectedNode.isZone==true){
+            try{
+                String id = (String)selectedNode.userHashMap.get("id");
+                con.prepareStatement("INSERT INTO tasks (title, startzone, description) VALUES ('New Task Title', "+id+", 'New Task')").executeUpdate();
+            }
+            catch(SQLException e){
+                System.out.println(e.getMessage());
+            }
+            
+            System.out.println("createNewTask: Task created.");
+            
+        }
+        else {
+            System.out.println("createNewTask: Task NOT created.");
+        }
+        
+        
+    }
+    
+    public static void createNewTaskFromPrototype(EQTreeNode selectedNode){
+        if(selectedNode.isZone==false){
+            try{
+                
+                String id = (String)selectedNode.userHashMap.get("id");
+                
+                con.prepareStatement("INSERT INTO tasks SELECT * FROM tasks WHERE id = " +id).executeUpdate();
+                
+                System.out.println("createNewTaskFromPrototype: Task created");
+            }
+            catch(SQLException e){
+                System.out.println(e.getMessage());
+            }
+            
+        }
+        else {
+            System.out.println("createNewTaskFromPrototype: Task NOT created.");
+        }
     }
     
     public static final int INSERT = 0;
